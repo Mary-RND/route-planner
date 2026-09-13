@@ -1,0 +1,1250 @@
+/* ============================================
+   ПЕРЕМЕННЫЕ
+   ============================================ */
+:root {
+  --bg: #f5f0eb;
+  --card: #ffffff;
+  --text: #16224a;
+  --text-muted: #5b6a92;
+  --accent: #7c5cfc;
+  --accent-hover: #6a4ce0;
+  --accent-light: #ede8ff;
+  --sea: #2f6fa8;
+  --sea-light: #e3f0fa;
+  --coral: #e2594a;
+  --coral-light: #fde8e5;
+  --green: #2aa84a;
+  --green-light: #e3f9ea;
+  --yellow: #c98a12;
+  --yellow-light: #fef3d7;
+  --red: #d32f2f;
+  --red-light: #fde8e8;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --shadow: 0 2px 16px rgba(26, 43, 94, .07);
+  --shadow-lg: 0 8px 28px rgba(26, 43, 94, .12);
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 32px;
+  --gap: 16px;
+  --gap-lg: 24px;
+  --transition: .25s ease;
+}
+
+/* Плавное движение с учётом prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   RESET / BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { line-height: 1.2; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+
+button:focus-visible,
+[data-action]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+html { scroll-behavior: smooth; }
+
+ul { list-style: none; }
+
+img { max-width: 100%; display: block; }
+
+.hidden { display: none !important; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
+
+/* ============================================
+   APP LAYOUT
+   ============================================ */
+.app {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--gap-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+/* ============================================
+   СОСТОЯНИЯ: LOADING / ERROR / EMPTY
+   ============================================ */
+.app-loader,
+.app-state {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--gap-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: var(--gap);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e8e4de 25%, #f0ece6 50%, #e8e4de 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton--cover {
+  width: 100%;
+  height: 180px;
+  border-radius: var(--radius);
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-lg);
+  width: 100%;
+}
+
+.skeleton-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+.skeleton--pace    { height: 120px; border-radius: var(--radius); }
+.skeleton--route   { height: 320px; border-radius: var(--radius); }
+.skeleton--budget  { height: 200px; border-radius: var(--radius); }
+.skeleton--booking { height: 160px; border-radius: var(--radius); }
+.skeleton--checklist { height: 240px; border-radius: var(--radius); }
+
+/* --- Error / Empty (общие стили) --- */
+.app-state__icon {
+  animation: stateFadeIn .4s ease;
+}
+
+@keyframes stateFadeIn {
+  from { opacity: 0; transform: scale(.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.app-state__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+
+.app-state__subtitle {
+  font-size: .95rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.app-state__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.app-state__btn {
+  padding: 12px 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: .95rem;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.app-state__btn:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(124, 92, 252, .3); }
+
+.app-state__btn--outline {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.app-state__btn--outline:hover {
+  background: var(--accent-light);
+}
+
+/* ============================================
+   БЛОК 1: ОБЛОЖКА
+   ============================================ */
+.cover {
+  background: linear-gradient(135deg, #6a4ce0 0%, #2f6fa8 55%, #e2594a 100%);
+  border-radius: var(--radius);
+  padding: 44px 44px 36px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -40%; right: -20%;
+  width: 360px; height: 360px;
+  background: rgba(255,255,255,.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -30%; left: -10%;
+  width: 280px; height: 280px;
+  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cover__content { position: relative; z-index: 1; }
+
+.cover__title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin-bottom: var(--space-3);
+}
+
+.cover__dates {
+  font-size: 1.125rem;
+  font-weight: 500;
+  opacity: .95;
+  margin-bottom: var(--space-2);
+}
+
+.cover__countdown {
+  font-size: .95rem;
+  opacity: .85;
+  margin-bottom: var(--space-7);
+}
+
+.cover__route {
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+}
+
+.route-svg {
+  width: 100%;
+  height: 64px;
+  overflow: visible;
+}
+
+.route-svg circle {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+}
+
+.route-svg path {
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.15));
+}
+
+.route-labels {
+  position: relative;
+  height: 34px;
+  padding-top: 6px;
+}
+
+.route-label {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  font-size: .72rem;
+  font-weight: 600;
+  opacity: .92;
+  text-align: center;
+  white-space: nowrap;
+  max-width: 120px;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+}
+
+/* ============================================
+   ВЕРХНЯЯ НАВИГАЦИЯ
+   ============================================ */
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.topnav__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-muted);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+}
+
+.topnav__btn:hover:not(.topnav__btn--active) {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.topnav__btn--active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(124, 92, 252, .3);
+}
+
+/* ============================================
+   MAIN GRID
+   ============================================ */
+.main {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* Вкладки-виды: показываем только активный */
+.view {
+  display: none;
+}
+
+.view--active {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+/* ============================================
+   CARD (общая карточка)
+   ============================================ */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: var(--gap-lg);
+  box-shadow: var(--shadow);
+}
+
+.card__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  margin-bottom: var(--space-6);
+}
+
+/* ============================================
+   БЛОК 2: ТЕМП ПУТЕШЕСТВИЯ
+   ============================================ */
+.pace-toggle__buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: var(--gap);
+}
+
+.pace-btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: .95rem;
+  background: var(--bg);
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.pace-btn--active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(124, 92, 252, .3);
+}
+
+.pace-btn:hover:not(.pace-btn--active) {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.pace-toggle__hint {
+  font-size: .9rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pace-toggle__day-cost {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: .95rem;
+}
+
+.pace-toggle__forecast {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+
+.pace-toggle__forecast-label {
+  font-size: .9rem;
+  color: var(--text-muted);
+}
+
+.pace-toggle__forecast-value {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+/* ============================================
+   БЛОК 3: МАРШРУТ ПО ДНЯМ
+   ============================================ */
+.day-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-5);
+  scrollbar-width: thin;
+}
+
+.day-tab {
+  flex-shrink: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 10px;
+  font-size: .85rem;
+  font-weight: 600;
+  background: var(--bg);
+  color: var(--text-muted);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.day-tab--active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.day-tab:hover:not(.day-tab--active) {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.day-info {
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid #f0ece6;
+}
+
+.day-info__city {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.day-info__date {
+  font-size: .9rem;
+  color: var(--text-muted);
+}
+
+.day-info__cost {
+  margin-left: auto;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.day-events__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: .95rem;
+}
+
+.event-card {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(26, 43, 94, .10);
+}
+
+.event-card--enter {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: eventIn .35s ease forwards;
+}
+
+.event-card--current {
+  background: var(--accent-light);
+  border: 2px solid var(--accent);
+  padding: 12px;
+}
+
+.event-card--current .event-card__name {
+  color: var(--accent-hover);
+}
+
+@keyframes eventIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.event-card__time {
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--accent);
+  min-width: 48px;
+  padding-top: 2px;
+}
+
+.event-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.event-card__head .event-card__time { padding-top: 0; }
+
+.event-card__place {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--sea);
+  background: var(--sea-light);
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+.event-card__body { flex: 1; }
+
+.event-card__name {
+  font-weight: 600;
+  font-size: .95rem;
+  margin-bottom: 4px;
+}
+
+.event-card__meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.event-card__category {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: .76rem;
+  font-weight: 600;
+}
+
+.event-card__category--транспорт { background: var(--sea-light); color: var(--sea); }
+.event-card__category--жильё { background: var(--accent-light); color: var(--accent-hover); }
+.event-card__category--экскурсия { background: var(--coral-light); color: var(--coral); }
+.event-card__category--активность { background: var(--green-light); color: var(--green); }
+.event-card__category--еда { background: var(--yellow-light); color: var(--yellow); }
+
+.event-card__cost {
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+
+.event-card__cost strong {
+  color: var(--text);
+}
+
+.event-card__status {
+  font-size: .75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  margin-left: auto;
+}
+
+.event-card__status--confirmed { background: var(--green-light); color: var(--green); }
+.event-card__status--pending { background: var(--yellow-light); color: var(--yellow); }
+
+/* ============================================
+   БЛОК 4: БЮДЖЕТ
+   ============================================ */
+.budget-card__body {
+  display: flex;
+  gap: var(--gap-lg);
+  align-items: center;
+  margin-bottom: var(--gap);
+}
+
+.budget-ring {
+  flex-shrink: 0;
+  width: 140px;
+  height: 140px;
+}
+
+.budget-ring__svg { width: 100%; height: 100%; }
+
+.budget-ring__svg circle[stroke-dasharray] {
+  transition: stroke-dashoffset 1s ease;
+}
+
+.budget-ring__value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  fill: var(--text);
+}
+
+.budget-ring__label {
+  font-size: .7rem;
+  fill: var(--text-muted);
+}
+
+.budget-card__stats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.budget-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.budget-stat__label {
+  font-size: .9rem;
+  color: var(--text-muted);
+}
+
+.budget-stat__value {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.budget-stat__value--accent { color: var(--accent); }
+.budget-stat__value--green { color: var(--green); }
+
+.budget-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.budget-cat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.budget-cat__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.budget-cat__name {
+  font-size: .85rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.budget-cat__bar-bg {
+  flex: 2;
+  height: 8px;
+  background: #f0ece6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.budget-cat__bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .5s ease;
+}
+
+.budget-cat__value {
+  font-size: .85rem;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ============================================
+   БЛОК 5: БРОНИРОВАНИЯ
+   ============================================ */
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.booking-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(26, 43, 94, .10);
+  background: #f7f3ee;
+}
+
+.booking-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.4rem;
+}
+
+.booking-card__icon--flight { background: var(--sea-light); }
+.booking-card__icon--hotel { background: var(--accent-light); }
+.booking-card__icon--train { background: var(--coral-light); }
+.booking-card__icon--excursion { background: var(--green-light); }
+
+.booking-card__info { flex: 1; }
+
+.booking-card__title {
+  font-weight: 700;
+  font-size: .95rem;
+}
+
+.booking-card__detail {
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+
+.booking-card__cost {
+  font-weight: 700;
+  font-size: .9rem;
+  margin-right: 8px;
+}
+
+.booking-card__status {
+  font-size: .75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.booking-card__status--confirmed {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.booking-card__status--pending {
+  background: var(--yellow-light);
+  color: var(--yellow);
+}
+
+.booking-confirm-btn {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: .8rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.booking-confirm-btn:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(124, 92, 252, .3);
+}
+
+/* ============================================
+   БЛОК 6: ЧЕК-ЛИСТ
+   ============================================ */
+.checklist-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-bottom: var(--gap);
+  padding-bottom: 4px;
+}
+
+.checklist-tab {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: .8rem;
+  font-weight: 600;
+  background: var(--bg);
+  color: var(--text-muted);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.checklist-tab--active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.checklist-tab:hover:not(.checklist-tab--active) {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.checklist-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: var(--gap);
+}
+
+.checklist-progress__bar-bg {
+  flex: 1;
+  height: 10px;
+  background: #f0ece6;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.checklist-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), #5edc84);
+  border-radius: 5px;
+  transition: width .4s ease;
+  width: 0%;
+}
+
+.checklist-progress__text {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 50px;
+  text-align: right;
+}
+
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--gap);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.checklist-item:hover {
+  background: #ece8e2;
+  transform: translateX(2px);
+}
+
+.checklist-item:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+  background: #ece8e2;
+}
+
+.checklist-item__checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid var(--accent);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.checklist-item--checked .checklist-item__checkbox {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.checklist-item--checked .checklist-item__checkbox::after {
+  content: '';
+  width: 6px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.checklist-item__text {
+  font-size: .9rem;
+  flex: 1;
+}
+
+.checklist-item--checked .checklist-item__text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.checklist-item__cat {
+  font-size: .7rem;
+  color: var(--text-muted);
+  background: var(--card);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.checklist-reset {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--coral);
+  background: var(--coral-light);
+  transition: all var(--transition);
+}
+
+.checklist-reset:hover {
+  background: var(--coral);
+  color: #fff;
+}
+
+/* ============================================
+   ЭКРАН «СЕГОДНЯ»
+   ============================================ */
+.mobile-today {
+  display: block;
+  padding: var(--space-2) 0 0;
+}
+
+/* На широком экране — в три колонки */
+@media (min-width: 769px) {
+  .mobile-today {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--gap);
+  }
+
+  .mobile-today__next,
+  .mobile-today__booking,
+  .mobile-today__task {
+    margin-bottom: 0;
+  }
+
+  .mobile-today__title,
+  .mobile-today__date {
+    grid-column: 1 / -1;
+  }
+}
+
+.mobile-today__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.mobile-today__date {
+  font-size: .95rem;
+  color: var(--text-muted);
+  margin-bottom: var(--gap);
+}
+
+.mobile-today__label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+
+.mobile-today__next,
+.mobile-today__booking,
+.mobile-today__task {
+  margin-bottom: var(--gap);
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-today__event-card,
+.mobile-today__booking-card,
+.mobile-today__task-card {
+  background: var(--card);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  height: 100%;
+}
+
+.mobile-today__event-card .event-card__name,
+.mobile-today__booking-card .booking-card__title,
+.mobile-today__task-card .checklist-item__text {
+  font-weight: 700;
+}
+
+.mobile-today__booking-card .booking-confirm-btn {
+  margin-top: 10px;
+  display: inline-block;
+}
+
+/* ============================================
+   МОБИЛЬНАЯ НИЖНЯЯ НАВИГАЦИЯ
+   ============================================ */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  box-shadow: 0 -2px 16px rgba(0,0,0,.08);
+  padding: 8px 0;
+  z-index: 100;
+  border-radius: 16px 16px 0 0;
+}
+
+.bottom-nav__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: .68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 8px 0;
+  transition: color var(--transition);
+  flex: 1;
+  min-height: 52px;
+}
+
+.bottom-nav__btn--active {
+  color: var(--accent);
+}
+
+.bottom-nav__btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ============================================
+   TOAST
+   ============================================ */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: #fff;
+  padding: 14px 30px;
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  font-weight: 600;
+  box-shadow: 0 12px 40px rgba(0,0,0,.24);
+  z-index: 200;
+  animation: toastIn .35s cubic-bezier(.2,.9,.3,1.2), toastOut .35s ease 2.2s forwards;
+  max-width: 90vw;
+  text-align: center;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(24px) scale(.95); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(24px) scale(.95); }
+}
+
+/* ============================================
+   ПАНЕЛЬ «ДЕМО СОСТОЯНИЙ»
+   ============================================ */
+.demo-panel {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  z-index: 150;
+}
+.demo-panel__toggle {
+  background: var(--text);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.demo-panel__body {
+  display: none;
+  background: var(--card);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: 12px;
+  gap: 8px;
+  box-shadow: var(--shadow);
+}
+
+.demo-panel__body--open { display: flex; }
+
+.demo-panel__btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #fff;
+  transition: opacity var(--transition);
+}
+
+.demo-panel__btn:hover { opacity: .85; }
+.demo-panel__btn--green  { background: var(--green); }
+.demo-panel__btn--blue   { background: var(--sea); }
+.demo-panel__btn--red    { background: var(--red); }
+.demo-panel__btn--yellow { background: var(--yellow); }
+
+/* ============================================
+   MEDIA QUERIES
+   ============================================ */
+
+/* --- Планшет 900px --- */
+@media (max-width: 900px) {
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cover__title { font-size: 1.75rem; }
+
+  .budget-card__body { flex-direction: column; align-items: center; }
+}
+
+@media (max-width: 768px) {
+  .app { padding: var(--gap); gap: var(--gap); }
+
+  .bottom-nav { display: flex; }
+
+  .app { padding-bottom: 80px; }
+
+  .demo-panel { bottom: 74px; }
+
+  .mobile-today { grid-template-columns: 1fr; }
+}
+
+/* --- Мобильный 600px --- */
+@media (max-width: 600px) {
+  .cover { padding: 26px 18px 22px; }
+  .cover__title { font-size: 1.35rem; }
+  .cover__dates { font-size: .95rem; }
+  .cover__route { display: none; }
+  .cover__countdown { margin-bottom: 0; }
+
+  /* Верхняя навигация: компактная и прокручиваемая */
+  .topnav {
+    justify-content: flex-start;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px var(--space-2);
+  }
+
+  .topnav__btn {
+    padding: var(--space-2) var(--space-4);
+    font-size: .85rem;
+    white-space: nowrap;
+  }
+
+  .skeleton-grid { grid-template-columns: 1fr; }
+
+  .bottom-nav { display: flex; }
+
+  .app { padding: var(--gap) var(--gap) 84px; }
+
+  .card { padding: var(--gap); }
+
+  .event-card,
+  .booking-card { padding: 12px; }
+
+  .budget-card__body { flex-direction: column; align-items: center; }
+
+  .mobile-today,
+  .main,
+  .card,
+  .booking-card,
+  .event-card { max-width: 100%; overflow-x: hidden; }
+}

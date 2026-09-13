@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Маршрут — Планировщик путешествия</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Состояние: loading -->
+  <div id="app-loader" class="app-loader hidden">
+    <div class="skeleton skeleton--cover"></div>
+    <div class="skeleton-grid">
+      <div class="skeleton-col">
+        <div class="skeleton skeleton--pace"></div>
+        <div class="skeleton skeleton--route"></div>
+      </div>
+      <div class="skeleton-col">
+        <div class="skeleton skeleton--budget"></div>
+        <div class="skeleton skeleton--booking"></div>
+        <div class="skeleton skeleton--checklist"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Состояние: error -->
+  <div id="app-error" class="app-state hidden">
+    <div class="app-state__icon">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+        <circle cx="36" cy="36" r="34" stroke="#E53935" stroke-width="2.5" stroke-dasharray="6 4"/>
+        <circle cx="36" cy="36" r="28" fill="#FDE8E8"/>
+        <line x1="36" y1="22" x2="36" y2="40" stroke="#E53935" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="36" cy="48" r="2.5" fill="#E53935"/>
+      </svg>
+    </div>
+    <p class="app-state__title">Что-то пошло не так</p>
+    <p class="app-state__subtitle">Не удалось загрузить данные путешествия. Проверьте соединение и попробуйте снова.</p>
+    <button class="app-state__btn" data-action="retry">Повторить</button>
+  </div>
+
+  <!-- Состояние: empty -->
+  <div id="app-empty" class="app-state hidden">
+    <div class="app-state__icon">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+        <rect x="14" y="14" width="44" height="44" rx="12" fill="#E3F0FA" stroke="#3B82C4" stroke-width="2"/>
+        <line x1="24" y1="30" x2="48" y2="30" stroke="#3B82C4" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="24" y1="38" x2="40" y2="38" stroke="#3B82C4" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="24" y1="46" x2="34" y2="46" stroke="#3B82C4" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="app-state__title">На этот день событий нет</p>
+    <p class="app-state__subtitle">Попробуйте выбрать другой день в маршруте или переключить темп путешествия — возможно, там уже есть запланированные активности.</p>
+    <div class="app-state__actions">
+      <button class="app-state__btn" data-action="next-day">Выбрать следующий день</button>
+      <button class="app-state__btn app-state__btn--outline" data-action="switch-pace">Переключить темп</button>
+    </div>
+  </div>
+
+  <!-- Основной контент (success) -->
+  <div id="app" class="app">
+
+    <!-- Верхняя навигация -->
+    <nav class="topnav" id="topnav" aria-label="Основная навигация">
+      <button class="topnav__btn topnav__btn--active" data-action="view" data-view="today" aria-current="page">Сегодня</button>
+      <button class="topnav__btn" data-action="view" data-view="route">Маршрут</button>
+      <button class="topnav__btn" data-action="view" data-view="budget">Бюджет</button>
+      <button class="topnav__btn" data-action="view" data-view="prep">Подготовка</button>
+    </nav>
+
+    <main class="main" id="main-content">
+
+      <!-- ВИД: Сегодня -->
+      <div class="view view--active" data-view="today">
+        <header class="cover">
+          <div class="cover__content">
+            <h1 class="cover__title" id="cover-title"></h1>
+            <p class="cover__dates" id="cover-dates"></p>
+            <p class="cover__countdown" id="cover-countdown"></p>
+          </div>
+          <div class="cover__route">
+            <svg class="route-svg" id="route-svg" viewBox="0 0 600 80" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="route-labels" id="route-labels"></div>
+          </div>
+        </header>
+
+        <section class="mobile-today" id="mobile-today">
+          <h2 class="mobile-today__title" id="mt-title"></h2>
+          <p class="mobile-today__date" id="mt-date"></p>
+
+          <div class="mobile-today__next" id="mt-next">
+            <span class="mobile-today__label">Ближайшее событие</span>
+            <div class="mobile-today__event-card" id="mt-event"></div>
+          </div>
+
+          <div class="mobile-today__booking" id="mt-booking">
+            <span class="mobile-today__label">Ближайшее бронирование</span>
+            <div class="mobile-today__booking-card" id="mt-booking-card"></div>
+          </div>
+
+          <div class="mobile-today__task" id="mt-task">
+            <span class="mobile-today__label">Следующая задача</span>
+            <div class="mobile-today__task-card" id="mt-task-card"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ВИД: Маршрут -->
+      <div class="view" data-view="route">
+        <div class="card pace-toggle">
+          <h2 class="card__title">Темп путешествия</h2>
+          <div class="pace-toggle__buttons">
+            <button class="pace-btn pace-btn--active" data-action="pace" data-pace="calm">Спокойно</button>
+            <button class="pace-btn" data-action="pace" data-pace="intense">Насыщенно</button>
+          </div>
+          <p class="pace-toggle__hint" id="pace-hint"></p>
+          <div class="pace-toggle__forecast">
+            <span class="pace-toggle__forecast-label">Прогноз расходов:</span>
+            <span class="pace-toggle__forecast-value" id="pace-forecast"></span>
+          </div>
+        </div>
+
+        <div class="card route-card">
+          <h2 class="card__title">Маршрут по дням</h2>
+          <div class="day-tabs" id="day-tabs" role="tablist" aria-label="Дни маршрута"></div>
+          <div class="day-info" id="day-info"></div>
+          <div class="day-events" id="day-events"></div>
+        </div>
+      </div>
+
+      <!-- ВИД: Бюджет -->
+      <div class="view" data-view="budget">
+        <div class="card budget-card">
+          <h2 class="card__title">Бюджет</h2>
+          <div class="budget-card__body">
+            <div class="budget-ring" id="budget-ring">
+              <svg viewBox="0 0 160 160" class="budget-ring__svg">
+                <circle cx="80" cy="80" r="65" fill="none" stroke="#f0ece6" stroke-width="14"/>
+                <circle cx="80" cy="80" r="65" fill="none" stroke="#7c5cfc" stroke-width="14"
+                  stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"
+                  transform="rotate(-90 80 80)" id="budget-progress"/>
+                <text x="80" y="74" text-anchor="middle" class="budget-ring__value" id="budget-percent">0%</text>
+                <text x="80" y="94" text-anchor="middle" class="budget-ring__label">использовано</text>
+              </svg>
+            </div>
+            <div class="budget-card__stats">
+              <div class="budget-stat">
+                <span class="budget-stat__label">Общий бюджет</span>
+                <span class="budget-stat__value" id="budget-total"></span>
+              </div>
+              <div class="budget-stat">
+                <span class="budget-stat__label">Запланировано</span>
+                <span class="budget-stat__value budget-stat__value--accent" id="budget-planned"></span>
+              </div>
+              <div class="budget-stat">
+                <span class="budget-stat__label">Остаток</span>
+                <span class="budget-stat__value budget-stat__value--green" id="budget-remaining"></span>
+              </div>
+            </div>
+          </div>
+          <div class="budget-categories" id="budget-categories"></div>
+        </div>
+
+        <div class="card bookings-card">
+          <h2 class="card__title">Бронирования</h2>
+          <div class="bookings-list" id="bookings-list"></div>
+        </div>
+      </div>
+
+      <!-- ВИД: Подготовка -->
+      <div class="view" data-view="prep">
+        <div class="card checklist-card">
+          <h2 class="card__title">Чек-лист подготовки</h2>
+          <div class="checklist-progress">
+            <div class="checklist-progress__bar-bg">
+              <div class="checklist-progress__bar" id="checklist-progress-bar"></div>
+            </div>
+            <span class="checklist-progress__text" id="checklist-progress-text">0 / 0</span>
+          </div>
+          <div class="checklist-tabs" id="checklist-tabs" role="tablist" aria-label="Категории чек-листа">
+            <button class="checklist-tab checklist-tab--active" data-action="checklist-cat" data-cat="все">Все</button>
+            <button class="checklist-tab" data-action="checklist-cat" data-cat="документы">Документы</button>
+            <button class="checklist-tab" data-action="checklist-cat" data-cat="деньги">Деньги</button>
+            <button class="checklist-tab" data-action="checklist-cat" data-cat="вещи">Вещи</button>
+            <button class="checklist-tab" data-action="checklist-cat" data-cat="здоровье">Здоровье</button>
+          </div>
+          <ul class="checklist-items" id="checklist-items"></ul>
+          <button class="checklist-reset" data-action="reset">Сбросить учебные данные</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Мобильная нижняя навигация -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Мобильная навигация">
+      <button class="bottom-nav__btn bottom-nav__btn--active" data-action="view" data-view="today">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Сегодня</span>
+      </button>
+      <button class="bottom-nav__btn" data-action="view" data-view="route">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+        <span>Маршрут</span>
+      </button>
+      <button class="bottom-nav__btn" data-action="view" data-view="budget">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Бюджет</span>
+      </button>
+      <button class="bottom-nav__btn" data-action="view" data-view="prep">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Подготовка</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- ===== ПАНЕЛЬ «ДЕМО СОСТОЯНИЙ» ===== -->
+  <div class="demo-panel" id="demo-panel">
+    <button class="demo-panel__toggle" data-action="demo-toggle" aria-expanded="false">Демо состояний ▲</button>
+    <div class="demo-panel__body">
+      <button class="demo-panel__btn demo-panel__btn--blue" data-action="demo-state" data-state="loading">Загрузка</button>
+      <button class="demo-panel__btn demo-panel__btn--red" data-action="demo-state" data-state="error">Ошибка</button>
+      <button class="demo-panel__btn demo-panel__btn--yellow" data-action="demo-state" data-state="empty">Пустой день</button>
+      <button class="demo-panel__btn demo-panel__btn--green" data-action="demo-state" data-state="success">Готово</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
