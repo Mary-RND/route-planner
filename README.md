@@ -1,8 +1,14 @@
-# Маршрут (Route Planner)
+> [← Портфолио Марины Петрушиной](https://mary-rnd.github.io/portfolio/) — сайты, ИИ-боты, трекеры и автоматизация для малого бизнеса и MedTech.
+
+# Route Planner — планировщик путешествий
 
 Адаптивный веб-планировщик путешествия: обложка поездки, выбор темпа, маршрут по дням, бюджет, бронирования и чек-лист подготовки. Работает полностью офлайн — без сборки, внешних библиотек и сети: достаточно открыть `app/index.html` в браузере.
 
-Учебный проект с нуля: от брифа до критериев готовности и acceptance-тестов (см. `docs/technical-specification.md` и `references/design-brief.md`).
+**▶ Живое демо:** https://mary-rnd.github.io/route-planner/
+
+<img src="screenshots/app-hero.png" alt="Экран планировщика путешествий Route Planner" width="100%">
+
+Кейс: от брифа до критериев готовности и acceptance-тестов (см. `docs/technical-specification.md` и `references/design-brief.md`).
 
 ## Возможности
 
